@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Penyulang SUTM & SKTM 2025</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .search-container {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .search-box {
+            display: inline-flex;
+            align-items: center;
+            background: white;
+            border-radius: 50px;
+            padding: 10px 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        
+        .search-box:focus-within {
+            border-color: #667eea;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+        }
+        
+        #penyulang-input {
+            border: none;
+            outline: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            width: 300px;
+        }
+        
+        .search-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .results-container {
+            display: none;
+        }
+        
+        .result-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            border-left: 5px solid #667eea;
+            transition: transform 0.3s ease;
+        }
+        
+        .result-card:hover {
+            transform: translateY(-3px);
+        }
+        
+        .result-header {
+            color: #333;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .result-item {
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .result-label {
+            font-weight: bold;
+            color: #555;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+        
+        .result-value {
+            color: #333;
+            font-size: 1rem;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .data-info {
+            background: #e3f2fd;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            border-left: 4px solid #2196f3;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            #penyulang-input {
+                width: 250px;
+            }
+            
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Data Penyulang SUTM & SKTM 2025</h1>
+            <p>Masukkan nama penyulang untuk mencari data</p>
+        </div>
+        
+        <div class="data-info">
+            <strong>📋 Info:</strong> Template ini siap digunakan setelah data dari spreadsheet Anda dimasukkan. 
+            Silakan copy-paste data atau berikan akses ke spreadsheet untuk melengkapi fungsi pencarian.
+        </div>
+        
+        <div class="search-container">
+            <div class="search-box">
+                <input type="text" id="penyulang-input" placeholder="Masukkan nama penyulang..." autocomplete="off">
+                <button class="search-btn" onclick="searchPenyulang()">Cari</button>
+            </div>
+        </div>
+        
+        <div id="results" class="results-container">
+            <div id="results-content"></div>
+        </div>
+    </div>
+
+    <script>
+        // Data contoh - nanti akan diganti dengan data dari spreadsheet Anda
+        const dataPenyulang = {
+            "LS 03": [
+                {
+                    ulp: "",
+                    namaInstalasi: "SKTM 20 kV Peny LS 03 GI LISTRIK S/D GARDU A3Debour Jalan Putri Hijau",
+                    sktm: "2,28",
+                    sutm: "",
+                    satuan: "Kms",
+                    nomorNidi: "D.01.2025.217200",
+                    tanggal: "23 Januari 2025"
+                }
+            ],
+            "LI 02": [
+                {
+                    ulp: "",
+                    namaInstalasi: "SKTM 20 kV Peny LI 02 GI LISTRIK S/D GH PODOMORO Jalan Perintis Kemerdekaan",
+                    sktm: "2,40",
+                    sutm: "",
+                    satuan: "Kms",
+                    nomorNidi: "D.01.2025.217377",
+                    tanggal: "23 Januari 2025"
+                }
+            ],
+            "TT 06": [
+                {
+                    ulp: "",
+                    namaInstalasi: "SKTM 20 kV Peny TT 06 GI TITI KUNING S/D Gardu Switching Ahmad Yani Jalan Ahmad Yani",
+                    sktm: "1,92",
+                    sutm: "",
+                    satuan: "Kms",
+                    nomorNidi: "D.01.2025.219098",
+                    tanggal: "23 Januari 2025"
+                }
+            ],
+            "TI 07": [
+                {
+                    ulp: "JOHOR",
+                    namaInstalasi: "SUTM 20 kV Ovehead Peny TI 07 GI TITI KUNING S/D Ujung Penyulang Jalan Sari Rejo",
+                    sktm: "",
+                    sutm: "6,24",
+                    satuan: "Kms",
+                    nomorNidi: "D.01.2025.231978",
+                    tanggal: "24 Januari 2025"
+                }
+            ],
+            "LK 07": [
+                {
+                    ulp: "",
+                    namaInstalasi: "SKTM 20 kV Peny LK 07 GI LISTRIK S/D GH Darma Deli Jln Ahmad Yani",
+                    sktm: "1,44",
+                    sutm: "",
+                    satuan: "Kms",
+                    nomorNidi: "D.01.2025.272744",
+                    tanggal: "30 Januari 2025"
+                }
+            ],
+            "NR 02": [ // Menggabungkan semua data NR 02 ke dalam satu array
+                {
+                    ulp: "DELI TUA",
+                    namaInstalasi: "SUTM 20 kV Ovehead Peny NR 02 GI Namorambe S/D L01 Jalan Besar Delitua",
+                    sktm: "",
+                    sutm: "13,08",
+                    satuan: "Kms",
+                    nomorNidi: "D.02.2025.XLB7",
+                    tanggal: "18 Februari 2025"
+                },
+                {
+                    ulp: "DELI TUA",
+                    namaInstalasi: "SUTM 20 kV L02 Peny NR 02 S/D Ujung L02 Jalan Ds Kuta Mulyo",
+                    sktm: "",
+                    sutm: "17,28",
+                    satuan: "Kms",
+                    nomorNidi: "D.02.2025.XLL0",
+                    tanggal: "18 Februari 2025"
+                },
+                {
+                    ulp: "DELI TUA",
+                    namaInstalasi: "SUTM 20 kV L04 Peny NR 02 S/D Ujung L04 Jalan Besar Sibiru-biru",
+                    sktm: "",
+                    sutm: "33,77",
+                    satuan: "Kms",
+                    nomorNidi: "D.02.2025.XLT8",
+                    tanggal: "18 Februari 2025"
+                },
+                {
+                    ulp: "DELI TUA",
+                    namaInstalasi: "SUTM 20 kV L03 Peny NR 02 S/D L04 Jalan Besar Delitua sibiru biru",
+                    sktm: "",
+                    sutm: "13,2",
+                    satuan: "Kms",
+                    nomorNidi: "D.03.2025.YFV7",
+                    tanggal: "19 Februari 2025"
+                },
+                {
+                    ulp: "DELI TUA",
+                    namaInstalasi: "SUTM 20 kV L01 Peny NR 02 S/D L03 Jalan Besar Delitua sibiru biru",
+                    sktm: "",
+                    sutm: "27,72",
+                    satuan: "Kms",
+                    nomorNidi: "D.03.2025.YGF4",
+                    tanggal: "19 Februari 2025"
+                }
+            ],
+            "TN 05": [
+                {
+                    ulp: "DELI TUA",
+                    namaInstalasi: "SUTM 20 kV Overhead TN 05 S/D Ujung Penyulang Jalan Besar Delitua",
+                    sktm: "",
+                    sutm: "21,12",
+                    satuan: "Kms",
+                    nomorNidi: "D.04.2025.FL60",
+                    tanggal: "10 April 2025"
+                }
+            ],
+            "TN 06": [
+                {
+                    ulp: "DELI TUA",
+                    namaInstalasi: "SUTM 20 kV Overhead TN 06 S/D Ujung Penyulang Jalan Marendal",
+                    sktm: "",
+                    sutm: "8,76",
+                    satuan: "Kms",
+                    nomorNidi: "D.04.2025.FK19",
+                    tanggal: "10 April 2025"
+                }
+            ],
+            "TKS 01": [ // Menggabungkan semua data TKS 01 ke dalam satu array
+                {
+                    ulp: "DELI TUA",
+                    namaInstalasi: "SUTM 20 kV Overhead TKS 01 S/D L01 TKS 01 Jalan Tirta Deli",
+                    sktm: "",
+                    sutm: "38,16",
+                    satuan: "Kms",
+                    nomorNidi: "D.04.2025.XM91",
+                    tanggal: "15 April 2025"
+                },
+                {
+                    ulp: "DELI TUA",
+                    namaInstalasi: "SUTM 20 kV L05 TKS 01 S/D Ujung Penyulang TKS 01 Jalan Gunung Manumpak",
+                    sktm: "",
+                    sutm: "34,68",
+                    satuan: "Kms",
+                    nomorNidi: "D.04.2025.OQV9",
+                    tanggal: "16 April 2025"
+                },
+                {
+                    ulp: "DELI TUA",
+                    namaInstalasi: "SUTM 20 kV L04 TKS 01 S/D L05 TKS 01 Jalan Tiga Juhar",
+                    sktm: "",
+                    sutm: "29,64",
+                    satuan: "Kms",
+                    nomorNidi: "D.04.2025.OVG8",
+                    tanggal: "16 April 2025"
+                },
+                {
+                    ulp: "DELI TUA",
+                    namaInstalasi: "SUTM 20 kV L01 TKS 01 S/D L02 Dan L04 TKS 01 Jalan Tirta Deli",
+                    sktm: "",
+                    sutm: "13.08",
+                    satuan: "Kms",
+                    nomorNidi: "D.04.2025.QTB5",
+                    tanggal: "17 April 2025"
+                },
+                {
+                    ulp: "DELI TUA",
+                    namaInstalasi: "SUTM 20 kV L03 TKS 01 S/D Ujung L03 TKS 01 Jalan Besar Piar Piar",
+                    sktm: "",
+                    sutm: "37,08",
+                    satuan: "Kms",
+                    nomorNidi: "D.04.2025.QRQ8",
+                    tanggal: "17 April 2025"
+                },
+                {
+                    ulp: "DELI TUA",
+                    namaInstalasi: "SUTM 20 kV L04 TKS 01 S/D L05 TKS 01 Jalan Tirta Deli",
+                    sktm: "",
+                    sutm: "3,6",
+                    satuan: "Kms",
+                    nomorNidi: "D.04.2025.227755",
+                    tanggal: "17 April 2025"
+                },
+            ], "TK 05": [
+                {
+                    ulp: "DELI TUA",
+                    namaInstalasi: "SUTM 20 kV Overhead TK 05 S/D Ujung Penyulang TK 05 Jalan Marendal Pasar 4",
+                    sktm: "",
+                    sutm: "12,72",
+                    satuan: "Kms",
+                    nomorNidi: "D.04.2025.UUC1",
+                    tanggal: "21 April 2025"
+                }
+            ],
+            "NR 05": [
+                {
+                    ulp: "DELI TUA",
+                    namaInstalasi: "SUTM 20 kV Overhead NR 05 S/D Ujung Penyulang NR 05 Jalan Sidomulyo",
+                    sktm: "",
+                    sutm: "31,8",
+                    satuan: "Kms",
+                    nomorNidi: "D.04.2025.VLA6",
+                    tanggal: "21 April 2025"
+                }
+            ],
+            "DA 07": [
+                {
+                    ulp: "SELATAN",
+                    namaInstalasi: "SUTM 20 kV Overhead DA 07 S/D Ujung Penyulang DA 07 Jalan Sisingamangaraja",
+                    sktm: "",
+                    sutm: "14,16",
+                    satuan: "Kms",
+                    nomorNidi: "D.04.2025.225393",
+                    tanggal: "22 April 2025"
+                }
+            ],
+            "DA 08": [
+                {
+                    ulp: "SELATAN",
+                    namaInstalasi: "SUTM 20 kV Overhead DA 08 S/D Ujung Penyulang DA 08 Jalan Pertahanan Patumbak",
+                    sktm: "",
+                    sutm: "7,56",
+                    satuan: "Kms",
+                    nomorNidi: "D.04.2025.226203",
+                    tanggal: "22 April 2025"
+                }
+            ],
+            "DN 01": [
+                {
+                    ulp: "SELATAN",
+                    namaInstalasi: "SUTM 20 kV Overhead DN 01 S/D Ujung Penyulang DN 01 Jalan Sisingamangaraja",
+                    sktm: "",
+                    sutm: "12,6",
+                    satuan: "Kms",
+                    nomorNidi: "D.04.2025.225792",
+                    tanggal: "22 April 2025"
+                }
+            ],
+            "PTS 08": [
+                {
+                    ulp: "BARU",
+                    namaInstalasi: "SUTM 20 kV Overhead PTS 08 S/D Ujung Penyulang PTS 08 Jalan Ibus Raya",
+                    sktm: "",
+                    sutm: "6,84",
+                    satuan: "Kms",
+                    nomorNidi: "D.04.2025.227096",
+                    tanggal: "25 April 2025"
+                }
+            ],
+            "PTS 04": [
+                {
+                    ulp: "BARU",
+                    namaInstalasi: "SUTM 20 kV Overhead PTS 04 S/D Ujung Penyulang PTS 04 Jalan Gajah Mada",
+                    sktm: "",
+                    sutm: "1,32",
+                    satuan: "Kms",
+                    nomorNidi: "D.04.2025.227342",
+                    tanggal: "25 April 2025"
+                }
+            ]
+        };
+        
+        function searchPenyulang() {
+            const input = document.getElementById('penyulang-input').value.trim();
+            const resultsContainer = document.getElementById('results');
+            const resultsContent = document.getElementById('results-content');
+            
+            if (!input) {
+                alert('Silakan masukkan nama penyulang!');
+                return;
+            }
+            
+            // Cari data yang cocok (case insensitive dan partial match)
+            let foundData = [];
+            const searchTerm = input.toUpperCase();
+            
+            for (let penyulang in dataPenyulang) {
+                if (penyulang.toUpperCase().includes(searchTerm)) {
+                    foundData = foundData.concat(dataPenyulang[penyulang].map(data => ({
+                        ...data,
+                        penyulang: penyulang // Tambahkan nama penyulang ke setiap objek data
+                    })));
+                }
+            }
+            
+            // Tampilkan hasil
+            if (foundData.length > 0) {
+                let html = '';
+                foundData.forEach((data, index) => {
+                    // Penanganan untuk SKTM atau SUTM yang mungkin kosong
+                    const sktmValue = data.sktm && data.sktm !== "" ? data.sktm : '-';
+                    const sutmValue = data.sutm && data.sutm !== "" ? data.sutm : '-';
+
+                    html += `
+                        <div class="result-card">
+                            <div class="result-header">📍 ${data.penyulang} - Data ${index + 1}</div>
+                            <div class="result-grid">
+                                <div class="result-item">
+                                    <div class="result-label">ULP</div>
+                                    <div class="result-value">${data.ulp || '-'}</div>
+                                </div>
+                                <div class="result-item">
+                                    <div class="result-label">Nama Instalasi</div>
+                                    <div class="result-value">${data.namaInstalasi || '-'}</div>
+                                </div>
+                                <div class="result-item">
+                                    <div class="result-label">SKTM</div>
+                                    <div class="result-value">${sktmValue}</div>
+                                </div>
+                                <div class="result-item">
+                                    <div class="result-label">SUTM</div>
+                                    <div class="result-value">${sutmValue}</div>
+                                </div>
+                                <div class="result-item">
+                                    <div class="result-label">Satuan</div>
+                                    <div class="result-value">${data.satuan || '-'}</div>
+                                </div>
+                                <div class="result-item">
+                                    <div class="result-label">Nomor NIDI</div>
+                                    <div class="result-value">${data.nomorNidi || '-'}</div>
+                                </div>
+                                <div class="result-item">
+                                    <div class="result-label">Tanggal</div>
+                                    <div class="result-value">${data.tanggal || '-'}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                resultsContent.innerHTML = html;
+            } else {
+                // Tampilkan semua penyulang yang tersedia
+                const availablePenyulang = Object.keys(dataPenyulang).join(', ');
+                resultsContent.innerHTML = `
+                    <div class="no-results">
+                        <h3>❌ Data tidak ditemukan</h3>
+                        <p>Penyulang "<strong>${input}</strong>" tidak ada dalam database.</p>
+                        <p><strong>Penyulang tersedia:</strong> ${availablePenyulang}</p>
+                        <p><small>💡 Tip: Anda bisa mencari dengan sebagian nama (contoh: "LS", "TI", dll)</small></p>
+                    </div>
+                `;
+            }
+            
+            resultsContainer.style.display = 'block';
+        }
+        
+        // Enter key untuk search
+        document.getElementById('penyulang-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchPenyulang();
+            }
+        });
+        
+        // Auto focus pada input
+        document.getElementById('penyulang-input').focus();
+    </script>
+</body>
+</html>
